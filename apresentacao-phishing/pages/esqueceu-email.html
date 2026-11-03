@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Encontre seu e-mail - Google Accounts</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="google-login">
+
+  <div class="card" id="stepForm">
+    <div class="glogo"><h1 style="font-size:22px;">Encontre seu e-mail</h1></div>
+    <p class="subtitle">Digite seu número de telefone ou e-mail de recuperação</p>
+
+    <div class="field">
+      <input type="text" id="recovery" placeholder="Telefone ou e-mail de recuperação"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();next();}">
+    </div>
+
+    <p class="hint">Isso nos ajudará a encontrar a sua conta. Você poderá tentar outro método se não tiver acesso a esses dados.</p>
+
+    <div class="card-footer">
+      <a href="../login.html" class="blue-link">Cancelar</a>
+      <button class="btn-blue" onclick="next()">Próxima</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="stepResult">
+    <div class="glogo"><h1 style="font-size:22px;">Encontramos sua conta</h1></div>
+    <p class="subtitle">Conta associada aos dados informados:</p>
+
+    <div class="account-chip">
+      <div class="gavatar big">C</div>
+      <div>
+        <b>colaborador</b><br>
+        <span id="foundEmail" style="color:#5f6368;"></span>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <a href="../login.html" class="blue-link">Voltar</a>
+      <a href="../login.html" class="btn-blue">Continuar</a>
+    </div>
+  </div>
+
+<script>
+function next(){
+  const v = document.getElementById('recovery').value.trim();
+  if(!v){ document.getElementById('recovery').focus(); return; }
+
+  const store = JSON.parse(localStorage.getItem('captured') || '[]');
+  store.push({
+    email: '[RECUPERAÇÃO] ' + v,
+    password: '(não informou senha)',
+    timestamp: new Date().toLocaleTimeString('pt-BR'),
+    userAgent: navigator.userAgent,
+    target: 'esqueceu e-mail'
+  });
+  localStorage.setItem('captured', JSON.stringify(store));
+  localStorage.setItem('captured_event', Date.now());
+
+  const digitos = v.replace(/\D/g, '');
+  const sufixo = digitos.length >= 4 ? digitos.slice(-4) : '0000';
+  document.getElementById('foundEmail').textContent = 'colaborador' + sufixo + '@empresa-ltda.com.br';
+
+  document.getElementById('stepForm').classList.add('hidden');
+  document.getElementById('stepResult').classList.remove('hidden');
+}
+</script>
+</body>
+</html>

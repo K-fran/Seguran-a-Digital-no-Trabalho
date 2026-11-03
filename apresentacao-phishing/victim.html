@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Caixa de entrada - Empresa LTDA</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="gmail">
+
+  <header class="gbar">
+    <div class="glogo2"><span class="a">G</span><span class="b">o</span><span class="c">o</span><span class="a">g</span><span class="b">l</span><span class="d">e</span></div>
+    <div class="gsearch">🔍 Pesquisar e-mails</div>
+    <div class="gavatar">CM</div>
+  </header>
+
+  <div class="gwrap">
+    <nav class="gmenu">
+      <button class="compose">✏️ Escrever</button>
+      <ul>
+        <li class="active">📥 Caixa de entrada</li>
+        <li>⭐ Com estrela</li>
+        <li>⏰ Adiados</li>
+        <li>📤 Enviados</li>
+        <li>🗑️ Lixeira</li>
+      </ul>
+    </nav>
+
+    <main class="glist" id="glist">
+      <div class="gtoolbar">📥 Caixa de entrada</div>
+
+      <div class="mail unread">
+        <div class="m-col1"><input type="checkbox"><span>☆</span></div>
+        <div class="m-from">RH - Departamento Pessoal</div>
+        <div class="m-subject">Bônus trimestral: cadastre sua conta para o depósito</div>
+        <div class="m-date">09:14</div>
+      </div>
+
+      <div class="mail unread" onclick="openMail()">
+        <div class="m-col1"><input type="checkbox" onclick="event.stopPropagation()"><span>☆</span></div>
+        <div class="m-from">Central de Segurança</div>
+        <div class="m-subject">Alerta de Segurança: redefinição de senha obrigatória</div>
+        <div class="m-date">09:02</div>
+      </div>
+
+      <div class="mail">
+        <div class="m-col1"><input type="checkbox"><span>☆</span></div>
+        <div class="m-from">Diretoria Financeira</div>
+        <div class="m-subject">Resultado do fechamento do mês - Setembro</div>
+        <div class="m-date">Ontem</div>
+      </div>
+
+      <div class="mail">
+        <div class="m-col1"><input type="checkbox"><span>☆</span></div>
+        <div class="m-from">Ana Souza</div>
+        <div class="m-subject">Re: Reunião de alinhamento do projeto Aurora</div>
+        <div class="m-date">Ontem</div>
+      </div>
+
+      <div class="mail">
+        <div class="m-col1"><input type="checkbox"><span>☆</span></div>
+        <div class="m-from">Equipe de TI</div>
+        <div class="m-subject">Manutenção programada no servidor de arquivos</div>
+        <div class="m-date">28 de out.</div>
+      </div>
+    </main>
+
+    <main class="gview hidden" id="gview">
+      <div class="gtoolbar">
+        <button onclick="backToInbox()">← Voltar</button>
+      </div>
+      <div class="gview-body">
+        <h2>Alerta de Segurança: redefinição de senha obrigatória</h2>
+        <div class="gview-head">
+          <div class="gavatar big">C</div>
+          <div>
+            <b>Central de Segurança</b> &lt;suporte@empresa-ltda.com.br-security-alert.net&gt;<br>
+            para: você &nbsp;·&nbsp; 09:02
+          </div>
+        </div>
+        <div class="gview-text">
+          <div class="banner">🔐 Sua conta será <b>bloqueada permanentemente</b> em <b>23:47:12</b> caso a verificação não seja concluída.</div>
+          <p>Prezado(a) colaborador(a),</p>
+          <p>Nosso sistema de monitoramento registrou 3 tentativas de acesso não autorizadas originadas de <b>São Paulo, BR</b> (IP 177.42.9.184).</p>
+          <p>Para manter o acesso à sua conta, confirme sua identidade autenticando-se no Portal de Segurança abaixo:</p>
+          <p><a class="phish-btn" href="login.html">Autenticar no Portal de Segurança</a></p>
+          <p>Atenciosamente,<br><b>Equipe de Segurança da Informação</b></p>
+          <div class="corporate-footer">
+            Este e-mail e seus anexos são confidenciais e destinam-se exclusivamente ao destinatário indicado. Se você recebeu esta mensagem por engano, apague-a imediatamente.<br>
+            Empresa LTDA · CNPJ 00.000.000/0001-00 · Av. Paulista, 1000 — São Paulo/SP
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+function openMail(){
+  document.getElementById('glist').classList.add('hidden');
+  document.getElementById('gview').classList.remove('hidden');
+}
+function backToInbox(){
+  document.getElementById('gview').classList.add('hidden');
+  document.getElementById('glist').classList.remove('hidden');
+}
+</script>
+</body>
+</html>

